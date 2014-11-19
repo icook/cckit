@@ -1,0 +1,3 @@
+py.test
+flake8
+pep8-naming
