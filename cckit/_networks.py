@@ -34,8 +34,8 @@ class NetworkMetaclass(type):
         super(NetworkMetaclass, cls).__init__(name, bases, new_dct)
 
 
-class Network(object):
-    __metaclass__ = NetworkMetaclass
+class Network(object, metaclass=NetworkMetaclass):
+    pass
 
 
 class Bitcoin(Network):
