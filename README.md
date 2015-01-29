@@ -1,8 +1,6 @@
 A basic POC for a sufficiently generic Crypto network defintion. Basic
 interface can be demonstrated:
 
-**Note**: Only works on 2.7 at the moment
-
 ```
 >>> from cckit.networks import Bitcoin
 # The Transaction object has a reference to it's Network configuration
