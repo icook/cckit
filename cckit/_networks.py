@@ -40,3 +40,4 @@ class Network(object, metaclass=NetworkMetaclass):
 
 class Bitcoin(Network):
     transaction = bitcoin.Transaction
+    rpc = bitcoin.RPCWrapper
