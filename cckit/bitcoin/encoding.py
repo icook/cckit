@@ -1,9 +1,14 @@
 import struct
 
 from ..serialize import Streamer
+import sys
+if sys.version[0] == 3:
+    integer_class = int
+else:
+    integer_class = long
 
 
-class Int(Streamer, int):
+class Int(Streamer, integer_class):
     """ Encoding for a variable length integer. Read more about it here:
     https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer
     """
