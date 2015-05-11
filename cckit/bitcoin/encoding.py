@@ -2,7 +2,7 @@ import struct
 
 from ..serialize import Streamer
 import sys
-if sys.version[0] == 3:
+if sys.version_info[0] >= 3:
     integer_class = int
 else:
     integer_class = long
