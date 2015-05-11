@@ -21,3 +21,20 @@ def test_int_encode(encoded, decoded):
     int_obj = encoding.Int(decoded)
     print(int_obj)
     assert int_obj.to_bytes() == encoded
+
+
+string_tests = [
+    (b'\x0bthisisatest', b'thisisatest'),
+]
+
+
+@pytest.mark.parametrize("encoded,decoded", string_tests)
+def test_string_decode(encoded, decoded):
+    assert encoding.String.from_bytes(encoded) == decoded
+
+
+@pytest.mark.parametrize("encoded,decoded", string_tests)
+def test_string_encode(encoded, decoded):
+    str_obj = encoding.String(decoded)
+    print(str_obj)
+    assert str_obj.to_bytes() == encoded
