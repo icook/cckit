@@ -1,4 +1,44 @@
+import struct
+
+from .encoding import String, Int, Hash
 from cckit.rpc import CoinRPC
+
+
+class Input(object):
+    """ An individual input to a transaction. """
+
+    def __init__(self):
+        self.prevout_hash = Int(-1)
+        self.prevout_idx = Int(-1)
+        self.script_sig = String()
+        self.seqno = Int(-1)
+
+    @classmethod
+    def from_stream(cls, f):
+        self = cls()
+        self.prevout_hash = Hash.from_le(f.read(32)),
+        self.prevout_idx = struct.unpack("<L"),
+        self.script_sig = String(f)
+        self.seqno, = struct.unpack("<L")
+
+    def to_stream(self, f):
+        f.write(self.prevout_hash.le)
+        f.write(struct.pack("<L", self.prevout_idx))
+        self.script_sig.to_stream(f)
+        f.write(struct.pack("<L", self.seqno))
+
+
+class Output(object):
+    """ script_pub_key is a byte string. Amount is an integer. """
+    @classmethod
+    def from_stream(cls, f):
+        self = cls()
+        self.amount = struct.unpack("<Q")
+        self.script_sig = String.from_stream(f)
+
+    def to_stream(self, f):
+        f.write(struct.pack("<Q", self.amount))
+        self.script_pub_key.to_stream(f)
 
 
 class Transaction(object):
@@ -10,17 +50,29 @@ class Transaction(object):
         self.locktime = 0
         self.version = 1
 
-    @classmethod
-    def from_network(cls, bytestream):
-        """ Should take a network format Transaction message in and decode it
-        into an object """
-        return cls()
+    def to_network(self, f):
+        """ Writes the network stream to a bytestream """
 
     @classmethod
-    def from_ref_disk(cls, bytestream):
-        """ Should take a reference client disk Transaction in and decode it
-        """
-        return cls()
+    def from_network(cls, f):
+        """ Should take a network format Transaction message in and decode it
+        into an object """
+        self = cls()
+        self.version, = struct.unpack("<L", f)
+        input_count = Int.from_stream(f)
+        for i in range(input_count):
+            self.inputs.append(Input.parse(f))
+        output_count = Int.from_stream(f)
+        for i in range(output_count):
+            self.outputs.append(Output.parse(f))
+        lock_time, = struct.unpack("<L", f)
+        return self
+
+    @classmethod
+    def from_ref_disk(cls, f):
+        """ Should take a reference client disk Transaction byte stream and
+        decode it """
+        return cls.from_network(f)
 
 
 class RPCWrapper(CoinRPC):
