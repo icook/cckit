@@ -4,8 +4,23 @@ from cckit.rpc import CoinRPC
 class Transaction(object):
     network = None
 
-    def test(self):
-        print("this is a test")
+    def __init__(self):
+        self.inputs = []
+        self.outputs = []
+        self.locktime = 0
+        self.version = 1
+
+    @classmethod
+    def from_network(cls, bytestream):
+        """ Should take a network format Transaction message in and decode it
+        into an object """
+        return cls()
+
+    @classmethod
+    def from_ref_disk(cls, bytestream):
+        """ Should take a reference client disk Transaction in and decode it
+        """
+        return cls()
 
 
 class RPCWrapper(CoinRPC):
