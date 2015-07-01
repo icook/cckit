@@ -20,6 +20,7 @@ class Input(object):
         self.prevout_idx, = struct.unpack("<L", f.read(4))
         self.script_sig = String.from_stream(f)
         self.seqno, = struct.unpack("<L", f.read(4))
+        return self
 
     def to_stream(self, f):
         f.write(self.prevout_hash.le)
@@ -33,12 +34,13 @@ class Output(object):
     @classmethod
     def from_stream(cls, f):
         self = cls()
-        self.amount = struct.unpack("<Q", f.read(8))
+        self.amount, = struct.unpack("<Q", f.read(8))
         self.script_sig = String.from_stream(f)
+        return self
 
     def to_stream(self, f):
         f.write(struct.pack("<Q", self.amount))
-        self.script_pub_key.to_stream(f)
+        self.script_sig.to_stream(f)
 
 
 class Transaction(object):
