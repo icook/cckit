@@ -136,6 +136,11 @@ transaction_tests = [
 
 
 @pytest.mark.parametrize("b64tx,hash", transaction_tests)
-def test_int_decode(b64tx, hash):
-    stream = BytesIO(base64.b64decode(b64tx))
+def test_transaction_recode(b64tx, hash):
+    tx_bytes = base64.b64decode(b64tx)
+    stream = BytesIO(tx_bytes)
     tx = Bitcoin.transaction.from_network(stream)
+    stream2 = BytesIO(tx_bytes)
+    tx.to_network(stream2)
+    stream2.seek(0)
+    assert stream2.read() == tx_bytes

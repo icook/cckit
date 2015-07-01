@@ -41,12 +41,12 @@ def test_string_encode(encoded, decoded):
 
 
 hash_tests = [
-    (b'\xfb\xff\xff\xfa\xff\xfc\xff\xbf\xff'),
+    (b'\xfb\xff\xff\xfa\xff\xfc\xff\xbf\xfb\xff\xff\xfa\xff\xfc\xff\xbf\xfb\xff\xff\xfa\xff\xfc\xff\xbf\xfb\xff\xff\xfa\xff\xfc\xff\xbf'),
 ]
 
 
 @pytest.mark.parametrize("bytes", hash_tests)
-def test_int_decode(bytes):
+def test_hash_recode(bytes):
     obj = encoding.Hash.from_le(bytes)
     assert obj.le == bytes
     obj2 = encoding.Hash.from_be(obj.be)

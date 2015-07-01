@@ -55,11 +55,9 @@ class Transaction(object):
     def to_network(self, f):
         """ Writes the network stream to a bytestream """
         f.write(struct.pack("<L", self.version))
-        print(Int(len(self.inputs)).to_hex())
         Int(len(self.inputs)).to_stream(f)
         for inpt in self.inputs:
             inpt.to_stream(f)
-        print(Int(len(self.outputs)).to_hex())
         Int(len(self.outputs)).to_stream(f)
         for output in self.outputs:
             output.to_stream(f)
@@ -72,12 +70,14 @@ class Transaction(object):
         self = cls()
         self.version, = struct.unpack("<L", f.read(4))
         input_count = Int.from_stream(f)
+        self.inputs = []
         for i in range(input_count):
             self.inputs.append(Input.from_stream(f))
         output_count = Int.from_stream(f)
+        self.outputs = []
         for i in range(output_count):
             self.outputs.append(Output.from_stream(f))
-        lock_time, = struct.unpack("<L", f.read(4))
+        self.locktime, = struct.unpack("<L", f.read(4))
         return self
 
     @classmethod

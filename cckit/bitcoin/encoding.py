@@ -50,6 +50,17 @@ class String(Streamer, bytes):
         f.write(self)
 
 
+def to_bytes(v, length, byteorder="big"):
+    l = bytearray()
+    for i in range(length):
+        mod = v & 0xff
+        v >>= 8
+        l.append(mod)
+        if byteorder == "big":
+            l.reverse()
+    return bytes(l)
+
+
 class Hash(integer_class):
     """ Helper object for dealing with hash encoding. Most functions from
     bitcoind deal with little-endian values while most consumer use
@@ -64,11 +75,11 @@ class Hash(integer_class):
 
     @property
     def le(self):
-        return binascii.unhexlify("%16x" % (self,))[::-1]
+        return to_bytes(self, 32, byteorder="little")
 
     @property
     def be(self):
-        return binascii.unhexlify("%16x" % (self,))
+        return to_bytes(self, 32, byteorder="big")
 
     @classmethod
     def from_sha256d(cls, data):
