@@ -16,10 +16,10 @@ class Input(object):
     @classmethod
     def from_stream(cls, f):
         self = cls()
-        self.prevout_hash = Hash.from_le(f.read(32)),
-        self.prevout_idx = struct.unpack("<L"),
-        self.script_sig = String(f)
-        self.seqno, = struct.unpack("<L")
+        self.prevout_hash = Hash.from_le(f.read(32))
+        self.prevout_idx, = struct.unpack("<L", f.read(4))
+        self.script_sig = String.from_stream(f)
+        self.seqno, = struct.unpack("<L", f.read(4))
 
     def to_stream(self, f):
         f.write(self.prevout_hash.le)
@@ -33,7 +33,7 @@ class Output(object):
     @classmethod
     def from_stream(cls, f):
         self = cls()
-        self.amount = struct.unpack("<Q")
+        self.amount = struct.unpack("<Q", f.read(8))
         self.script_sig = String.from_stream(f)
 
     def to_stream(self, f):
@@ -58,14 +58,14 @@ class Transaction(object):
         """ Should take a network format Transaction message in and decode it
         into an object """
         self = cls()
-        self.version, = struct.unpack("<L", f)
+        self.version, = struct.unpack("<L", f.read(4))
         input_count = Int.from_stream(f)
         for i in range(input_count):
-            self.inputs.append(Input.parse(f))
+            self.inputs.append(Input.from_stream(f))
         output_count = Int.from_stream(f)
         for i in range(output_count):
-            self.outputs.append(Output.parse(f))
-        lock_time, = struct.unpack("<L", f)
+            self.outputs.append(Output.from_stream(f))
+        lock_time, = struct.unpack("<L", f.read(4))
         return self
 
     @classmethod
