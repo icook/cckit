@@ -16,8 +16,8 @@ class Streamer(object):
             raise Exception("Didn't consume all bytes")
         return ret
 
-    def to_hex(cls):
-        return cls.to_stream().read()
+    def to_hex(self):
+        return binascii.hexlify(self.to_bytes())
 
     def to_bytes(cls):
         f = BytesIO()
