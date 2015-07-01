@@ -50,7 +50,7 @@ class String(Streamer, bytes):
         f.write(self)
 
 
-class Hash(int):
+class Hash(integer_class):
     """ Helper object for dealing with hash encoding. Most functions from
     bitcoind deal with little-endian values while most consumer use
     big-endian. """

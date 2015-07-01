@@ -38,3 +38,16 @@ def test_string_encode(encoded, decoded):
     str_obj = encoding.String(decoded)
     print(str_obj)
     assert str_obj.to_bytes() == encoded
+
+
+hash_tests = [
+    (b'\xfb\xff\xff\xfa\xff\xfc\xff\xbf\xff'),
+]
+
+
+@pytest.mark.parametrize("bytes", hash_tests)
+def test_int_decode(bytes):
+    obj = encoding.Hash.from_le(bytes)
+    assert obj.le == bytes
+    obj2 = encoding.Hash.from_be(obj.be)
+    assert obj.be == obj2.be
