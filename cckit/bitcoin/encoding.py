@@ -50,15 +50,14 @@ class String(Streamer, bytes):
         f.write(self)
 
 
-def to_bytes(v, length, byteorder="big"):
+def to_bytes(v, length):
+    """ Converts an integer to `length` bytes in little endian byte order """
     l = bytearray()
     for i in range(length):
         mod = v & 0xff
         v >>= 8
         l.append(mod)
-        if byteorder == "big":
-            l.reverse()
-    return bytes(l)
+    return l
 
 
 class Hash(integer_class):
@@ -66,21 +65,21 @@ class Hash(integer_class):
     bitcoind deal with little-endian values while most consumer use
     big-endian. """
     @classmethod
-    def from_le(cls, data):
-        return cls(binascii.hexlify(data[::-1]), 16)
-
-    @classmethod
-    def from_be(cls, data):
+    def from_internal_bo(cls, data):
         return cls(binascii.hexlify(data), 16)
 
-    @property
-    def le(self):
-        return to_bytes(self, 32, byteorder="little")
-
-    @property
-    def be(self):
-        return to_bytes(self, 32, byteorder="big")
-
     @classmethod
-    def from_sha256d(cls, data):
-        return cls.from_be(sha256(sha256(data).digest()).digest())
+    def from_rpc_bo(cls, data):
+        ba = bytearray(data)
+        ba.reverse()
+        return cls(binascii.hexlify(ba), 16)
+
+    @property
+    def rpc_bo(self):
+        return bytes(to_bytes(self, 32))
+
+    @property
+    def internal_bo(self):
+        ba = to_bytes(self, 32)
+        ba.reverse()
+        return bytes(ba)

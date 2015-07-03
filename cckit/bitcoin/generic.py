@@ -16,14 +16,14 @@ class Input(object):
     @classmethod
     def from_stream(cls, f):
         self = cls()
-        self.prevout_hash = Hash.from_le(f.read(32))
+        self.prevout_hash = Hash.from_internal_bo(f.read(32))
         self.prevout_idx, = struct.unpack("<L", f.read(4))
         self.script_sig = String.from_stream(f)
         self.seqno, = struct.unpack("<L", f.read(4))
         return self
 
     def to_stream(self, f):
-        f.write(self.prevout_hash.le)
+        f.write(self.prevout_hash.internal_bo)
         f.write(struct.pack("<L", self.prevout_idx))
         self.script_sig.to_stream(f)
         f.write(struct.pack("<L", self.seqno))

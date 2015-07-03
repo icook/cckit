@@ -47,7 +47,10 @@ hash_tests = [
 
 @pytest.mark.parametrize("bytes", hash_tests)
 def test_hash_recode(bytes):
-    obj = encoding.Hash.from_le(bytes)
-    assert obj.le == bytes
-    obj2 = encoding.Hash.from_be(obj.be)
-    assert obj.be == obj2.be
+    obj = encoding.Hash.from_rpc_bo(bytes)
+    assert obj.rpc_bo == bytes
+    obj2 = encoding.Hash.from_internal_bo(bytes)
+    assert obj2.internal_bo == bytes
+
+    assert obj2.rpc_bo == obj.internal_bo
+    assert obj2.internal_bo == obj.rpc_bo
